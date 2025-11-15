@@ -53,15 +53,20 @@ fun TransactionScreen(navController: NavController, viewModel: TransactionViewMo
             AddTransactionDialog(
                 transaction = editingTransaction,
                 onDismiss = {
+                    showDialog = false
+                    editingTransaction = null
                 },
                 onAddTransaction = { newTransaction ->
                     viewModel.addTransaction(newTransaction)
+                    showDialog = false
                 },
                 onUpdateTransaction = { updatedTransaction ->
                     viewModel.updateTransaction(updatedTransaction)
+                    editingTransaction = null
                 },
                 onDeleteTransaction = { transactionToDelete ->
                     viewModel.deleteTransaction(transactionToDelete)
+                    editingTransaction = null
                 }
             )
         }
@@ -73,6 +78,7 @@ fun TransactionScreen(navController: NavController, viewModel: TransactionViewMo
             ) {
                 items(items = transactions, key = { it.id }) { transaction ->
                     TransactionItem(transaction = transaction) {
+                        editingTransaction = transaction
                     }
                 }
             }
@@ -83,7 +89,7 @@ fun TransactionScreen(navController: NavController, viewModel: TransactionViewMo
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Button(onClick = { }) {
+                Button(onClick = { showDialog = true }) {
                     Text(text = stringResource(R.string.add_transaction))
                 }
                 Box {
