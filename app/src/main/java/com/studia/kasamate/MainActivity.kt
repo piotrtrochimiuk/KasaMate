@@ -1,3 +1,4 @@
+
 package com.studia.kasamate
 
 import android.annotation.SuppressLint
@@ -5,20 +6,30 @@ import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.studia.kasamate.data.SettingsRepository
+import com.studia.kasamate.data.UserRepository
+import com.studia.kasamate.ui.login.LoginScreen
+import com.studia.kasamate.ui.login.LoginState
+import com.studia.kasamate.ui.login.LoginViewModel
+import com.studia.kasamate.ui.login.LoginViewModelFactory
+import com.studia.kasamate.ui.login.RegistrationScreen
 import com.studia.kasamate.ui.screens.AboutScreen
 import com.studia.kasamate.ui.screens.SettingsScreen
 import com.studia.kasamate.ui.screens.TransactionScreen
@@ -26,7 +37,8 @@ import com.studia.kasamate.ui.theme.KasaMateTheme
 import java.util.Locale
 
 class MainActivity : FragmentActivity() {
-    private var isAuthenticated by mutableStateOf(false)
+    private val userRepository = UserRepository()
+    private val loginViewModel: LoginViewModel by viewModels { LoginViewModelFactory(userRepository) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,17 +60,59 @@ class MainActivity : FragmentActivity() {
         if (settingsRepository.isBiometricAuthEnabled()) {
             showBiometricPrompt()
         } else {
-            isAuthenticated = true
+            loginViewModel.setAuthenticated(true)
         }
 
         setContent {
+            val isAuthenticated by loginViewModel.isAuthenticated.collectAsState()
             if (isAuthenticated) {
                 KasaMateTheme {
                     val navController = rememberNavController()
-                    NavHost(navController = navController, startDestination = "transactions") {
-                        composable("transactions") { TransactionScreen(navController = navController) }
+                    val loginState by loginViewModel.loginState.collectAsState()
+
+                    NavHost(navController = navController, startDestination = "login") {
+                        composable("login") {
+                            LoginScreen(
+                                onLoginClick = { username, password ->
+                                    loginViewModel.login(username, password)
+                                },
+                                onRegisterClick = { navController.navigate("register") }
+                            )
+                        }
+                        composable("register") {
+                            RegistrationScreen(
+                                onRegisterClick = { username, password, confirm ->
+                                    loginViewModel.register(username, password, confirm)
+                                },
+                                onBackPressed = { navController.popBackStack() }
+                            )
+                        }
+                        composable(
+                            "transactions/{username}",
+                            arguments = listOf(navArgument("username") { type = NavType.StringType })
+                        ) { backStackEntry ->
+                            backStackEntry.arguments?.getString("username")?.let { username ->
+                                TransactionScreen(navController = navController, username = username)
+                            }
+                        }
                         composable("settings") { SettingsScreen(navController = navController) }
                         composable("about") { AboutScreen(navController = navController) }
+                    }
+
+                    LaunchedEffect(loginState) {
+                        when (val state = loginState) {
+                            is LoginState.Success -> {
+                                if (navController.currentDestination?.route?.startsWith("transactions") == false) {
+                                    navController.navigate("transactions/${state.username}") {
+                                        popUpTo("login") { inclusive = true }
+                                    }
+                                }
+                            }
+                            is LoginState.Error -> {
+                                Toast.makeText(applicationContext, state.message, Toast.LENGTH_SHORT).show()
+                            }
+                            else -> {}
+                        }
                     }
                 }
             }
@@ -73,7 +127,7 @@ class MainActivity : FragmentActivity() {
                 object : BiometricPrompt.AuthenticationCallback() {
                     override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                         super.onAuthenticationSucceeded(result)
-                        isAuthenticated = true
+                        loginViewModel.setAuthenticated(true)
                     }
 
                     override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
@@ -91,7 +145,7 @@ class MainActivity : FragmentActivity() {
 
             biometricPrompt.authenticate(promptInfo)
         } else {
-            isAuthenticated = true // No biometrics, allow access
+            loginViewModel.setAuthenticated(true) // No biometrics, allow access
         }
     }
 

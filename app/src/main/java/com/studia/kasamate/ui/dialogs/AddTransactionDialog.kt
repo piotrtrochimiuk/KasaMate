@@ -16,6 +16,7 @@ import java.util.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddTransactionDialog(
+    username: String,
     transaction: Transaction? = null,
     onDismiss: () -> Unit,
     onAddTransaction: (Transaction) -> Unit,
@@ -69,7 +70,8 @@ fun AddTransactionDialog(
                                 Transaction(
                                     description = description,
                                     price = priceDouble,
-                                    date = date
+                                    date = date,
+                                    username = username
                                 )
                             )
                         } else {
