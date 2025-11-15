@@ -1,0 +1,41 @@
+<resources>
+    <string name="app_name">KasaMate</string>
+    <string name="settings">Ustawienia</string>
+    <string name="currency">Waluta</string>
+    <string name="language">Język</string>
+    <string name="add_transaction">Dodaj transakcję</string>
+    <string name="theme">Motyw</string>
+
+    <string name="add_new_transaction">Dodaj nową transakcję</string>
+    <string name="edit_transaction">Edytuj transakcję</string>
+    <string name="description">Opis</string>
+    <string name="price">Cena</string>
+    <string name="date_format">Data (rrrr-MM-dd)</string>
+    <string name="add">Dodaj</string>
+    <string name="update">Aktualizuj</string>
+    <string name="delete">Usuń</string>
+    <string name="cancel">Anuluj</string>
+    <string name="back">Wstecz</string>
+    <string name="language_en">Angielski</string>
+    <string name="language_pl">Polski</string>
+    <string name="theme_light">Jasny</string>
+    <string name="theme_dark">Ciemny</string>
+    <string name="theme_system">Systemowy</string>
+
+    <string name="about">Informacje</string>
+    <string name="author">Autor</string>
+    <string name="version">Wersja</string>
+
+    <string name="sort">Sortuj</string>
+    <string name="sort_name_asc">Nazwa (A-Z)</string>
+    <string name="sort_name_desc">Nazwa (Z-A)</string>
+    <string name="sort_price_asc">Cena (rosnąco)</string>
+    <string name="sort_price_desc">Cena (malejąco)</string>
+    <string name="sort_date_asc">Data (od najstarszych)</string>
+    <string name="sort_date_desc">Data (od najnowszych)</string>
+
+    <string name="biometric_title">Uwierzytelnianie</string>
+    <string name="biometric_subtitle">Uwierzytelnij się, aby uzyskać dostęp</string>
+    <string name="biometric_cancel">Anuluj</string>
+    <string name="biometric_auth">Uwierzytelnianie biometryczne</string>
+</resources>
