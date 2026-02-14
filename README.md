@@ -17,8 +17,9 @@
 |--------------------|--------------------------|------------------------------------------------------------------|
 | Piotr Trochimiuk   | kierownik projektu       | Planowanie, koordynacja, raportowanie postępów, kontakt z prowadzącym |
 | Sebastian Pidek    | Programista     | Implementacja kodu, opracowanie scenariuszy testowych            |
+| Mateusz Sochacki   | Tester                   | Testowanie funkcjonalne aplikacji, zgłaszanie błędów, wsparcie przy implementacji i poprawkach
 | Jan Płoskonka      | Dokumentalista, analityk | Redakcja dokumentacji projektowej, raporty, tworzenie przypadków użycia, diagramy UML |
-| Mateusz Sochacki   | Tester                   | 
+
 
 
 
@@ -78,8 +79,10 @@ Projekt KasaMate ma na celu:
 | Rola                     | Osoba             | Odpowiedzialność                                             |
 |--------------------------|-----------------|-------------------------------------------------------------|
 | Kierownik projektu       | Piotr Trochimiuk | Harmonogram, raporty, koordynacja, prezentacja            |
-| Programista, tester      | Sebastian Pidek  | Programowanie, testy, raport błędów                        |
+| Programista              | Sebastian Pidek  | Programowanie, testy, raport błędów                        |
+|Tester, wsparcie          |Mateusz Sochacki  |Testy funkcjonalne, raportowanie błędów, poprawki|
 | Dokumentalista, analityk | Jan Płoskonka    | Dokumentacja, raporty, Wymagania, UML                       |
+
 
 
 **7\. Zasoby i narzędzia**
@@ -143,8 +146,10 @@ Projekt KasaMate ma na celu:
 | **Funkcja**              | **Imię i nazwisko** | **Data**     | **Podpis** |
 |--------------------------|-------------------|-------------|------------|
 | Kierownik projektu       | Piotr Trochimiuk  | 19.10.2025  |            |
-| Programista, tester      | Sebastian Pidek   | 19.10.2025  |            |
+| Programista              | Sebastian Pidek   | 19.10.2025  |            |
+| Tester, wsparcie         | Mateusz Sochacki  | 19.10.2025  |            |
 | Dokumentalista, analityk | Jan Płoskonka     | 19.10.2025  |            |
+
 
 
 Kierownik projektu Piotr Trochimiuk 19.10.2025 \_**\_**\_**\_**\____
@@ -158,4 +163,5 @@ Prowadzący mgr. Wojciech Moniuszko 19.10.2025 \_**\_**\_**\_**\____
 \- Aktualizacja wersji dokumentu wymaga zgody kierownika projektu i prowadzącego.
 
 \- Każdy członek zespołu ma obowiązek zapoznać się z treścią karty i ją zaakceptować.
+
 
