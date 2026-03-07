@@ -2,9 +2,12 @@ package com.studia.kasamate.ui.login
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.studia.kasamate.data.User
 import com.studia.kasamate.data.UserRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
@@ -17,6 +20,9 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
 
     private val _username = MutableStateFlow<String?>(null)
     val username = _username.asStateFlow()
+
+    val allUsers = userRepository.getAllUsers()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
 
     fun setAuthenticated(authenticated: Boolean) {
         _isAuthenticated.value = authenticated
@@ -50,6 +56,35 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
                 _loginState.value = LoginState.Success(username)
             } else {
                 _loginState.value = LoginState.Error("User already exists")
+            }
+        }
+    }
+
+    fun logout() {
+        _loginState.value = LoginState.Idle
+        _username.value = null
+    }
+
+    fun deleteUser(username: String, passwordConfirm: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            val userPassword = userRepository.getUser(username)
+            if (userPassword != null && userPassword == passwordConfirm) {
+                userRepository.deleteUser(username)
+                onSuccess()
+            } else {
+                onError("Invalid password")
+            }
+        }
+    }
+
+    fun changePassword(username: String, oldPasswordConfirm: String, newPassword: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
+        viewModelScope.launch {
+            val userPassword = userRepository.getUser(username)
+            if (userPassword != null && userPassword == oldPasswordConfirm) {
+                userRepository.updatePassword(username, newPassword)
+                onSuccess()
+            } else {
+                onError("Invalid old password")
             }
         }
     }

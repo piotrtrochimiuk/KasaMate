@@ -7,15 +7,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.studia.kasamate.R
+import com.studia.kasamate.ui.theme.KasaMateTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,5 +58,13 @@ private fun getAppVersion(context: Context): String {
         packageInfo.versionName ?: "N/A"
     } catch (_: Exception) {
         "N/A"
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun AboutScreenPreview() {
+    KasaMateTheme {
+        AboutScreen(navController = rememberNavController())
     }
 }

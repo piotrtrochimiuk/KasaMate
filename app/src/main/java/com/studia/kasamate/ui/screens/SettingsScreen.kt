@@ -7,39 +7,29 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.studia.kasamate.MainActivity
 import com.studia.kasamate.R
+import com.studia.kasamate.ui.theme.KasaMateTheme
 import com.studia.kasamate.ui.viewmodel.SettingsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel = viewModel()) {
-    var currency by remember { mutableStateOf(viewModel.getCurrency()) }
-    var language by remember { mutableStateOf(viewModel.getLanguage()) }
-    var theme by remember { mutableStateOf(viewModel.getTheme()) }
-    var biometricAuthEnabled by remember { mutableStateOf(viewModel.isBiometricAuthEnabled()) }
+    var currency by remember { mutableStateOf(try { viewModel.getCurrency() } catch (e: Exception) { "PLN" }) }
+    var language by remember { mutableStateOf(try { viewModel.getLanguage() } catch (e: Exception) { "en" }) }
+    var theme by remember { mutableStateOf(try { viewModel.getTheme() } catch (e: Exception) { "system" }) }
+    var biometricAuthEnabled by remember { mutableStateOf(try { viewModel.isBiometricAuthEnabled() } catch (e: Exception) { false }) }
     var currencyExpanded by remember { mutableStateOf(false) }
     var languageExpanded by remember { mutableStateOf(false) }
     var themeExpanded by remember { mutableStateOf(false) }
@@ -131,5 +121,13 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel = 
                 })
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun SettingsScreenPreview() {
+    KasaMateTheme {
+        SettingsScreen(navController = rememberNavController())
     }
 }

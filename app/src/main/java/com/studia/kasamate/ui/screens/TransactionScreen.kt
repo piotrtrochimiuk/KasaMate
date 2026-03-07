@@ -1,5 +1,6 @@
 package com.studia.kasamate.ui.screens
 
+import android.app.Application
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -11,6 +12,7 @@ import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -20,10 +22,16 @@ import com.studia.kasamate.data.Transaction
 import com.studia.kasamate.ui.dialogs.AddTransactionDialog
 import com.studia.kasamate.ui.viewmodel.SortType
 import com.studia.kasamate.ui.viewmodel.TransactionViewModel
+import com.studia.kasamate.ui.viewmodel.TransactionViewModelFactory
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransactionScreen(navController: NavController, viewModel: TransactionViewModel = viewModel()) {
+fun TransactionScreen(
+    navController: NavController,
+    username: String,
+    onLogout: () -> Unit,
+    viewModel: TransactionViewModel = viewModel(factory = TransactionViewModelFactory(LocalContext.current.applicationContext as Application, username))
+) {
     val transactions by viewModel.allTransactions.observeAsState(emptyList())
     var showDialog by remember { mutableStateOf(false) }
     var editingTransaction by remember { mutableStateOf<Transaction?>(null) }
@@ -42,8 +50,27 @@ fun TransactionScreen(navController: NavController, viewModel: TransactionViewMo
                         expanded = showMenu,
                         onDismissRequest = { showMenu = false }
                     ) {
-                        DropdownMenuItem(text = { Text(stringResource(R.string.settings)) }, onClick = { navController.navigate("settings") })
-                        DropdownMenuItem(text = { Text(stringResource(R.string.about)) }, onClick = { navController.navigate("about") })
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.settings)) },
+                            onClick = {
+                                showMenu = false
+                                navController.navigate("settings")
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.about)) },
+                            onClick = {
+                                showMenu = false
+                                navController.navigate("about")
+                            }
+                        )
+                        DropdownMenuItem(
+                            text = { Text(stringResource(R.string.logout)) },
+                            onClick = {
+                                showMenu = false
+                                onLogout()
+                            }
+                        )
                     }
                 }
             )
@@ -51,6 +78,7 @@ fun TransactionScreen(navController: NavController, viewModel: TransactionViewMo
     ) { paddingValues ->
         if (showDialog || editingTransaction != null) {
             AddTransactionDialog(
+                username = username,
                 transaction = editingTransaction,
                 onDismiss = {
                     showDialog = false

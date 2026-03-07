@@ -18,11 +18,13 @@
     <string name="back">Back</string>
     <string name="language_en">English</string>
     <string name="language_pl">Polish</string>
+    <string name="language_auto">Auto (System)</string>
     <string name="theme_light">Light</string>
     <string name="theme_dark">Dark</string>
     <string name="theme_system">System</string>
 
     <string name="about">About</string>
+    <string name="logout">Logout</string>
     <string name="author">Author</string>
     <string name="version">Version</string>
 
@@ -38,4 +40,18 @@
     <string name="biometric_subtitle">Authenticate to access the app</string>
     <string name="biometric_cancel">Cancel</string>
     <string name="biometric_auth">Biometric Authentication</string>
+
+    <string name="login">Login</string>
+    <string name="register">Register</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+
+    <string name="manage_users">Manage Users</string>
+    <string name="delete_user">Delete User</string>
+    <string name="change_password">Change Password</string>
+    <string name="new_password">New Password</string>
+    <string name="old_password">Old Password</string>
+    <string name="confirm_delete_user">Confirm Delete User</string>
+    <string name="enter_password_to_confirm">Enter password to confirm</string>
 </resources>

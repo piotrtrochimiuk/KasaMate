@@ -17,4 +17,7 @@ interface TransactionDao {
 
     @Delete
     suspend fun deleteTransaction(transaction: Transaction)
+
+    @Query("DELETE FROM transactions WHERE username = :username")
+    suspend fun deleteAllTransactionsByUser(username: String)
 }

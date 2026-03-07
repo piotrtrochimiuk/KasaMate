@@ -1,4 +1,3 @@
-
 package com.studia.kasamate
 
 import android.annotation.SuppressLint
@@ -23,6 +22,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.studia.kasamate.data.AppDatabase
 import com.studia.kasamate.data.SettingsRepository
 import com.studia.kasamate.data.UserRepository
 import com.studia.kasamate.ui.login.LoginScreen
@@ -37,11 +37,17 @@ import com.studia.kasamate.ui.theme.KasaMateTheme
 import java.util.Locale
 
 class MainActivity : FragmentActivity() {
-    private val userRepository = UserRepository()
-    private val loginViewModel: LoginViewModel by viewModels { LoginViewModelFactory(userRepository) }
+
+    private lateinit var loginViewModel: LoginViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val database = AppDatabase.getDatabase(applicationContext)
+        val userRepository = UserRepository(database.userDao(), database.transactionDao())
+
+        loginViewModel = viewModels<LoginViewModel> { LoginViewModelFactory(userRepository) }.value
+
         val settingsRepository = SettingsRepository(this)
         setLocale(this, settingsRepository.getLanguage())
 
@@ -69,6 +75,7 @@ class MainActivity : FragmentActivity() {
                 KasaMateTheme {
                     val navController = rememberNavController()
                     val loginState by loginViewModel.loginState.collectAsState()
+                    val allUsers by loginViewModel.allUsers.collectAsState()
 
                     NavHost(navController = navController, startDestination = "login") {
                         composable("login") {
@@ -76,7 +83,22 @@ class MainActivity : FragmentActivity() {
                                 onLoginClick = { username, password ->
                                     loginViewModel.login(username, password)
                                 },
-                                onRegisterClick = { navController.navigate("register") }
+                                onRegisterClick = { navController.navigate("register") },
+                                onSettingsClick = { navController.navigate("settings") },
+                                onAboutClick = { navController.navigate("about") },
+                                allUsers = allUsers,
+                                onDeleteUser = { username, password, onSuccess, onError ->
+                                    loginViewModel.deleteUser(username, password, onSuccess, { msg ->
+                                        Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
+                                        onError(msg)
+                                    })
+                                },
+                                onChangePassword = { username, oldPassword, newPassword, onSuccess, onError ->
+                                    loginViewModel.changePassword(username, oldPassword, newPassword, onSuccess, { msg ->
+                                        Toast.makeText(this@MainActivity, msg, Toast.LENGTH_SHORT).show()
+                                        onError(msg)
+                                    })
+                                }
                             )
                         }
                         composable("register") {
@@ -84,7 +106,9 @@ class MainActivity : FragmentActivity() {
                                 onRegisterClick = { username, password, confirm ->
                                     loginViewModel.register(username, password, confirm)
                                 },
-                                onBackPressed = { navController.popBackStack() }
+                                onBackPressed = { navController.popBackStack() },
+                                onSettingsClick = { navController.navigate("settings") },
+                                onAboutClick = { navController.navigate("about") }
                             )
                         }
                         composable(
@@ -92,7 +116,16 @@ class MainActivity : FragmentActivity() {
                             arguments = listOf(navArgument("username") { type = NavType.StringType })
                         ) { backStackEntry ->
                             backStackEntry.arguments?.getString("username")?.let { username ->
-                                TransactionScreen(navController = navController, username = username)
+                                TransactionScreen(
+                                    navController = navController,
+                                    username = username,
+                                    onLogout = {
+                                        loginViewModel.logout()
+                                        navController.navigate("login") {
+                                            popUpTo("transactions/$username") { inclusive = true }
+                                        }
+                                    }
+                                )
                             }
                         }
                         composable("settings") { SettingsScreen(navController = navController) }
@@ -151,6 +184,9 @@ class MainActivity : FragmentActivity() {
 
     @SuppressLint("AppBundleLocaleChanges")
     private fun setLocale(context: Context, languageCode: String) {
+        if (languageCode == "auto") {
+            return
+        }
         val locale = Locale(languageCode)
         Locale.setDefault(locale)
         val config = Configuration(context.resources.configuration)

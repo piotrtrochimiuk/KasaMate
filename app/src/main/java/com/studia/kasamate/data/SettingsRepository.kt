@@ -16,7 +16,7 @@ class SettingsRepository(context: Context) {
     }
 
     fun getLanguage(): String {
-        return prefs.getString("language", "en") ?: "en"
+        return prefs.getString("language", "auto") ?: "auto"
     }
 
     fun setLanguage(language: String) {
