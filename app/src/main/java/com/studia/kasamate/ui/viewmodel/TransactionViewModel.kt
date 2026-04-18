@@ -29,6 +29,7 @@ class TransactionViewModel(application: Application, private val username: Strin
 
     private val transactionRepository: TransactionRepository = TransactionRepository(AppDatabase.getDatabase(application).transactionDao())
     private val settingsRepository: SettingsRepository = SettingsRepository(application)
+    private val database: AppDatabase = AppDatabase.getDatabase(application)
     private val _sortType = MutableStateFlow(SortType.NONE)
 
     val allTransactions = transactionRepository.getAllTransactions(username).combine(_sortType) { transactions, sortType ->
@@ -58,6 +59,11 @@ class TransactionViewModel(application: Application, private val username: Strin
 
     fun deleteTransaction(transaction: Transaction) = viewModelScope.launch(Dispatchers.IO) {
         transactionRepository.delete(transaction)
+    }
+
+    fun clearDatabase() = viewModelScope.launch(Dispatchers.IO) {
+        database.clearAllTables()
+        settingsRepository.setMonthlyBudget(0.0)
     }
 }
 

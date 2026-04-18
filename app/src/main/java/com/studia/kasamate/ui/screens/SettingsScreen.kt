@@ -2,9 +2,8 @@ package com.studia.kasamate.ui.screens
 
 import android.app.Activity
 import android.content.Intent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -13,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -27,14 +27,20 @@ import com.studia.kasamate.ui.viewmodel.SettingsViewModel
 @Composable
 fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel = viewModel()) {
     var currency by remember { mutableStateOf(try { viewModel.getCurrency() } catch (e: Exception) { "PLN" }) }
-    var language by remember { mutableStateOf(try { viewModel.getLanguage() } catch (e: Exception) { "en" }) }
+    var language by remember { mutableStateOf(try { viewModel.getLanguage() } catch (e: Exception) { "auto" }) }
     var theme by remember { mutableStateOf(try { viewModel.getTheme() } catch (e: Exception) { "system" }) }
     var biometricAuthEnabled by remember { mutableStateOf(try { viewModel.isBiometricAuthEnabled() } catch (e: Exception) { false }) }
+    var monthlyBudget by remember { mutableStateOf(try { viewModel.getMonthlyBudget().toString() } catch (e: Exception) { "0.0" }) }
+    
     var currencyExpanded by remember { mutableStateOf(false) }
     var languageExpanded by remember { mutableStateOf(false) }
     var themeExpanded by remember { mutableStateOf(false) }
     val currencies = listOf("PLN", "USD", "EUR", "GBP")
-    val languages = mapOf("en" to stringResource(R.string.language_en), "pl" to stringResource(R.string.language_pl))
+    val languages = mapOf(
+        "auto" to stringResource(R.string.language_auto),
+        "en" to stringResource(R.string.language_en),
+        "pl" to stringResource(R.string.language_pl)
+    )
     val themes = mapOf("light" to stringResource(R.string.theme_light), "dark" to stringResource(R.string.theme_dark), "system" to stringResource(R.string.theme_system))
     val context = LocalContext.current
 
@@ -72,7 +78,7 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel = 
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Text(text = "${stringResource(R.string.language)}: ")
                 TextButton(onClick = { languageExpanded = true }) {
-                    Text(text = languages[language] ?: stringResource(R.string.language_en))
+                    Text(text = languages[language] ?: stringResource(R.string.language_auto))
                 }
                 DropdownMenu(
                     expanded = languageExpanded,
@@ -120,6 +126,19 @@ fun SettingsScreen(navController: NavController, viewModel: SettingsViewModel = 
                     viewModel.setBiometricAuthEnabled(it)
                 })
             }
+            Spacer(modifier = Modifier.height(16.dp))
+            OutlinedTextField(
+                value = monthlyBudget,
+                onValueChange = { 
+                    monthlyBudget = it
+                    it.toDoubleOrNull()?.let { budget ->
+                        viewModel.setMonthlyBudget(budget)
+                    }
+                },
+                label = { Text(stringResource(R.string.monthly_budget)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                modifier = Modifier.fillMaxWidth()
+            )
         }
     }
 }

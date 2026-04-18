@@ -11,11 +11,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.studia.kasamate.R
+import com.studia.kasamate.data.SettingsRepository
 import com.studia.kasamate.data.User
 import com.studia.kasamate.ui.theme.KasaMateTheme
 
@@ -30,8 +32,17 @@ fun LoginScreen(
     onDeleteUser: (String, String, () -> Unit, (String) -> Unit) -> Unit,
     onChangePassword: (String, String, String, () -> Unit, (String) -> Unit) -> Unit
 ) {
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val settingsRepository = remember { SettingsRepository(context) }
+    
+    var rememberMe by remember { mutableStateOf(settingsRepository.isRememberMeEnabled()) }
+    var username by remember { 
+        mutableStateOf(if (rememberMe) settingsRepository.getSavedUsername() else "") 
+    }
+    var password by remember { 
+        mutableStateOf(if (rememberMe) settingsRepository.getSavedPassword() else "") 
+    }
+    
     var showMenu by remember { mutableStateOf(false) }
     var showUserManagement by remember { mutableStateOf(false) }
 
@@ -204,9 +215,29 @@ fun LoginScreen(
                 visualTransformation = PasswordVisualTransformation(),
                 modifier = Modifier.fillMaxWidth()
             )
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Checkbox(
+                    checked = rememberMe,
+                    onCheckedChange = { 
+                        rememberMe = it 
+                        settingsRepository.setRememberMe(it)
+                        if (!it) settingsRepository.clearLoginCredentials()
+                    }
+                )
+                Text(text = stringResource(R.string.remember_me))
+            }
             Spacer(modifier = Modifier.height(16.dp))
             Button(
-                onClick = { onLoginClick(username, password) },
+                onClick = { 
+                    if (rememberMe) {
+                        settingsRepository.saveLoginCredentials(username, password)
+                    }
+                    onLoginClick(username, password) 
+                },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(stringResource(R.string.login))

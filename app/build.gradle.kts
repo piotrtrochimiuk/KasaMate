@@ -7,13 +7,11 @@ plugins {
 
 android {
     namespace = "com.studia.kasamate"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.studia.kasamate"
-        minSdk = 36
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -60,6 +58,7 @@ dependencies {
     implementation(libs.androidx.compose.runtime.livedata)
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
     implementation("androidx.biometric:biometric:1.1.0")
+    implementation(libs.jbcrypt)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

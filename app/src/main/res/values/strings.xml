@@ -54,4 +54,16 @@
     <string name="old_password">Old Password</string>
     <string name="confirm_delete_user">Confirm Delete User</string>
     <string name="enter_password_to_confirm">Enter password to confirm</string>
+
+    <string name="monthly_budget">Monthly Budget</string>
+    <string name="total_spent">Total Spent</string>
+    <string name="remaining_budget">Remaining Budget</string>
+    <string name="remember_me">Remember me</string>
+
+    <string name="add_income">Add Income</string>
+    <string name="income_amount">Income Amount</string>
+    <string name="clear_data">Clear All Data</string>
+    <string name="confirm_clear_data">Are you sure you want to delete all data? This action cannot be undone.</string>
+    <string name="chart_income">Incomes</string>
+    <string name="chart_expense">Expenses</string>
 </resources>

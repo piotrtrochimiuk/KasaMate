@@ -54,4 +54,16 @@
     <string name="old_password">Stare hasło</string>
     <string name="confirm_delete_user">Potwierdź usunięcie użytkownika</string>
     <string name="enter_password_to_confirm">Wprowadź hasło, aby potwierdzić</string>
+
+    <string name="monthly_budget">Miesięczny budżet</string>
+    <string name="total_spent">Suma wydatków</string>
+    <string name="remaining_budget">Pozostały budżet</string>
+    <string name="remember_me">Zapamiętaj mnie</string>
+
+    <string name="add_income">Dodaj wpływ</string>
+    <string name="income_amount">Kwota wpływu</string>
+    <string name="clear_data">Wyczyść wszystkie dane</string>
+    <string name="confirm_clear_data">Czy na pewno chcesz usunąć wszystkie dane? Tej operacji nie można cofnąć.</string>
+    <string name="chart_income">Wpływy</string>
+    <string name="chart_expense">Wydatki</string>
 </resources>

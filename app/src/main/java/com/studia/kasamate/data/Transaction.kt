@@ -24,5 +24,6 @@ data class Transaction(
     val price: Double,
     val date: String,
     val currency: String = "PLN",
-    val username: String
+    val username: String,
+    val isIncome: Boolean = false
 )

@@ -39,4 +39,12 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     fun setBiometricAuthEnabled(enabled: Boolean) {
         repository.setBiometricAuthEnabled(enabled)
     }
+
+    fun getMonthlyBudget(): Double {
+        return repository.getMonthlyBudget()
+    }
+
+    fun setMonthlyBudget(budget: Double) {
+        repository.setMonthlyBudget(budget)
+    }
 }

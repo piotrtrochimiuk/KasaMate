@@ -9,6 +9,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import org.mindrot.jbcrypt.BCrypt
 
 class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
 
@@ -31,8 +32,8 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
     fun login(username: String, password: String) {
         viewModelScope.launch {
             _loginState.value = LoginState.Loading
-            val userPassword = userRepository.getUser(username)
-            if (userPassword != null && userPassword == password) {
+            val passwordHash = userRepository.getUser(username)
+            if (passwordHash != null && BCrypt.checkpw(password, passwordHash)) {
                 _isAuthenticated.value = true
                 _username.value = username
                 _loginState.value = LoginState.Success(username)
@@ -49,7 +50,8 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
                 return@launch
             }
             _loginState.value = LoginState.Loading
-            val success = userRepository.addUser(username, password)
+            val hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt())
+            val success = userRepository.addUser(username, hashedPassword)
             if (success) {
                 _isAuthenticated.value = true
                 _username.value = username
@@ -67,8 +69,8 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
 
     fun deleteUser(username: String, passwordConfirm: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
         viewModelScope.launch {
-            val userPassword = userRepository.getUser(username)
-            if (userPassword != null && userPassword == passwordConfirm) {
+            val passwordHash = userRepository.getUser(username)
+            if (passwordHash != null && BCrypt.checkpw(passwordConfirm, passwordHash)) {
                 userRepository.deleteUser(username)
                 onSuccess()
             } else {
@@ -79,9 +81,10 @@ class LoginViewModel(private val userRepository: UserRepository) : ViewModel() {
 
     fun changePassword(username: String, oldPasswordConfirm: String, newPassword: String, onSuccess: () -> Unit, onError: (String) -> Unit) {
         viewModelScope.launch {
-            val userPassword = userRepository.getUser(username)
-            if (userPassword != null && userPassword == oldPasswordConfirm) {
-                userRepository.updatePassword(username, newPassword)
+            val passwordHash = userRepository.getUser(username)
+            if (passwordHash != null && BCrypt.checkpw(oldPasswordConfirm, passwordHash)) {
+                val newPasswordHash = BCrypt.hashpw(newPassword, BCrypt.gensalt())
+                userRepository.updatePassword(username, newPasswordHash)
                 onSuccess()
             } else {
                 onError("Invalid old password")

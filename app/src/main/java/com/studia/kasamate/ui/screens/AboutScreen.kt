@@ -38,7 +38,7 @@ fun AboutScreen(navController: NavController) {
         }
     ) { paddingValues ->
         Column(modifier = Modifier.padding(paddingValues).padding(16.dp)) {
-            Text(text = "${stringResource(R.string.author)}: Piotr Trochimiuk, Sebastian Pidek, Jan Płoskonka")
+            Text(text = "${stringResource(R.string.author)}: Piotr Trochimiuk, Sebastian Pidek, Jan Płoskonka, Mateusz Sochacki")
             Text(text = "${stringResource(R.string.version)}: $version")
         }
     }
