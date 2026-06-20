@@ -70,7 +70,7 @@ Projekt KasaMate ma na celu:
 |------------------|------------------------------------------------------------------------------------------------|
 | Funkcjonalne     | Rejestracja, logowanie, dodawanie przychodów i wydatków, kategorie, wykresy, ustawienia budżetu, powiadomienia push |
 | Niefunkcjonalne  | Czas odpowiedzi: max 2 sekundy, dostępność: 99%, intuicyjny interfejs                           |
-| Interfejsowe     | Natywny interfejs mobilny Android (Kotlin, Android Studio                               |
+| Interfejsowe     | Natywny interfejs mobilny Android (Kotlin, Android Studio)                               |
 | Bezpieczeństwo   | Logowanie użytkownika przy użyciu hasła SHA256, RODO                                           |
 
 
